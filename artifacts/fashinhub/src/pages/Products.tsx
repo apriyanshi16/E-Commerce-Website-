@@ -59,6 +59,8 @@ export default function Products() {
   if (isTrending) displayProducts = displayProducts.filter(p => p.isTrending);
   if (isFeatured) displayProducts = displayProducts.filter(p => p.isFeatured);
 
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+
   const clearFilters = () => {
     setQ("");
     setCategoryId(null);
@@ -70,106 +72,132 @@ export default function Products() {
     setIsFeatured(false);
   };
 
+  const activeFilterCount = [
+    q, categoryId, minPrice, maxPrice,
+    isDeal, isTrending, isFeatured,
+  ].filter(Boolean).length;
+
+  const filterPanel = (
+    <div className="bg-card border rounded-xl p-5 space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-bold">Filters</h2>
+        <Button variant="ghost" size="sm" onClick={clearFilters} className="h-8 px-2">
+          <X className="h-4 w-4 mr-1" /> Clear
+        </Button>
+      </div>
+
+      <div className="space-y-3">
+        <Label>Search</Label>
+        <div className="relative">
+          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search products..."
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        <Label>Category</Label>
+        <Select value={categoryId?.toString() || "all"} onValueChange={(val) => { setCategoryId(val === "all" ? null : Number(val)); setMobileFiltersOpen(false); }}>
+          <SelectTrigger>
+            <SelectValue placeholder="All Categories" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Categories</SelectItem>
+            {categories?.map((c) => (
+              <SelectItem key={c.id} value={c.id.toString()}>{c.name}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="space-y-3">
+        <Label>Price Range</Label>
+        <div className="flex items-center gap-2">
+          <Input
+            type="number"
+            placeholder="Min"
+            value={minPrice}
+            onChange={(e) => setMinPrice(e.target.value)}
+          />
+          <span>-</span>
+          <Input
+            type="number"
+            placeholder="Max"
+            value={maxPrice}
+            onChange={(e) => setMaxPrice(e.target.value)}
+          />
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        <Label>Sort By</Label>
+        <Select value={sort} onValueChange={setSort}>
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="newest">Newest</SelectItem>
+            <SelectItem value="popular">Popular</SelectItem>
+            <SelectItem value="price_asc">Price: Low to High</SelectItem>
+            <SelectItem value="price_desc">Price: High to Low</SelectItem>
+            <SelectItem value="rating">Highest Rated</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+  );
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col lg:flex-row gap-8">
-        {/* Sidebar Filters */}
-        <aside className="w-full lg:w-64 flex-shrink-0 space-y-6">
-          <div className="flex items-center justify-between lg:hidden mb-4">
-            <h2 className="text-xl font-bold flex items-center gap-2">
-              <Filter className="h-5 w-5" /> Filters
-            </h2>
-            <Button variant="outline" size="sm" onClick={clearFilters}>Clear All</Button>
-          </div>
-
-          <div className="bg-card border rounded-xl p-5 space-y-6">
-            <div className="hidden lg:flex items-center justify-between">
-              <h2 className="text-lg font-bold">Filters</h2>
-              <Button variant="ghost" size="sm" onClick={clearFilters} className="h-8 px-2">
-                <X className="h-4 w-4 mr-1" /> Clear
-              </Button>
-            </div>
-
-            <div className="space-y-3">
-              <Label>Search</Label>
-              <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input 
-                  placeholder="Search products..." 
-                  value={q}
-                  onChange={(e) => setQ(e.target.value)}
-                  className="pl-9"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <Label>Category</Label>
-              <Select value={categoryId?.toString() || "all"} onValueChange={(val) => setCategoryId(val === "all" ? null : Number(val))}>
-                <SelectTrigger>
-                  <SelectValue placeholder="All Categories" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  {categories?.map((c) => (
-                    <SelectItem key={c.id} value={c.id.toString()}>{c.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-3">
-              <Label>Price Range</Label>
-              <div className="flex items-center gap-2">
-                <Input 
-                  type="number" 
-                  placeholder="Min" 
-                  value={minPrice}
-                  onChange={(e) => setMinPrice(e.target.value)}
-                />
-                <span>-</span>
-                <Input 
-                  type="number" 
-                  placeholder="Max" 
-                  value={maxPrice}
-                  onChange={(e) => setMaxPrice(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <Label>Sort By</Label>
-              <Select value={sort} onValueChange={setSort}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="newest">Newest</SelectItem>
-                  <SelectItem value="popular">Popular</SelectItem>
-                  <SelectItem value="price_asc">Price: Low to High</SelectItem>
-                  <SelectItem value="price_desc">Price: High to Low</SelectItem>
-                  <SelectItem value="rating">Highest Rated</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+        {/* Desktop Sidebar — always visible on lg+ */}
+        <aside className="hidden lg:block w-64 flex-shrink-0">
+          {filterPanel}
         </aside>
 
         {/* Product Grid */}
-        <div className="flex-1">
-          <div className="mb-6 flex items-center justify-between">
-            <h1 className="text-2xl font-bold">
-              {q ? `Search results for "${q}"` : 
-               categoryId ? categories?.find(c => c.id === categoryId)?.name || 'Products' :
+        <div className="flex-1 min-w-0">
+          <div className="mb-6 flex items-center justify-between gap-3">
+            <h1 className="text-2xl font-bold truncate">
+              {q ? `Results for "${q}"` :
+               categoryId ? categories?.find(c => c.id === categoryId)?.name || "Products" :
                isDeal ? "Deals of the Day" :
                isTrending ? "Trending Products" :
                isFeatured ? "Featured Products" :
                "All Products"}
             </h1>
-            <p className="text-muted-foreground text-sm">
-              Showing {displayProducts.length} results
-            </p>
+            <div className="flex items-center gap-3 flex-shrink-0">
+              <p className="text-muted-foreground text-sm hidden sm:block">
+                {displayProducts.length} results
+              </p>
+              {/* Mobile filter toggle */}
+              <Button
+                variant="outline"
+                size="sm"
+                className="lg:hidden flex items-center gap-2"
+                onClick={() => setMobileFiltersOpen((v) => !v)}
+              >
+                <Filter className="h-4 w-4" />
+                Filters
+                {activeFilterCount > 0 && (
+                  <span className="bg-primary text-primary-foreground rounded-full text-xs w-5 h-5 flex items-center justify-center">
+                    {activeFilterCount}
+                  </span>
+                )}
+              </Button>
+            </div>
           </div>
+
+          {/* Mobile filter panel — collapses under the title bar */}
+          {mobileFiltersOpen && (
+            <div className="lg:hidden mb-6">
+              {filterPanel}
+            </div>
+          )}
 
           {isLoading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
