@@ -47,7 +47,7 @@ export function ProductCard({ product }: ProductCardProps) {
       return;
     }
     addToWishlist.mutate(
-      { params: { productId: product.id } },
+      { productId: product.id },
       {
         onSuccess: () => {
           toast({ title: "Added to wishlist" });

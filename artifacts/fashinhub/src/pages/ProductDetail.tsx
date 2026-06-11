@@ -69,7 +69,7 @@ export default function ProductDetail() {
       return;
     }
     addToWishlist.mutate(
-      { params: { productId } },
+      { productId },
       {
         onSuccess: () => {
           toast({ title: "Added to wishlist" });
