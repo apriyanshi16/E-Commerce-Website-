@@ -2,8 +2,19 @@ import { useGetFeaturedProducts, useGetTrendingProducts, useGetDeals, useGetCate
 import { ProductCard } from "@/components/shared/ProductCard";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
-import { ArrowRight, Zap, Flame, Star } from "lucide-react";
+import { ArrowRight, Zap, Flame, Star, ChevronRight } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+
+const CATEGORY_IMAGES: Record<string, string> = {
+  "Men's Fashion":    "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=600&auto=format&fit=crop",
+  "Women's Fashion":  "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&auto=format&fit=crop",
+  "Footwear":         "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&auto=format&fit=crop",
+  "Accessories":      "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=600&auto=format&fit=crop",
+  "Sportswear":       "https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=600&auto=format&fit=crop",
+  "Bags & Luggage":   "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=600&auto=format&fit=crop",
+  "Kids & Baby":      "https://images.unsplash.com/photo-1522771930-78848d9293e8?w=600&auto=format&fit=crop",
+  "Beauty & Grooming":"https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=600&auto=format&fit=crop",
+};
 
 export default function Home() {
   const { data: featured, isLoading: loadingFeatured } = useGetFeaturedProducts();
@@ -46,25 +57,51 @@ export default function Home() {
       <section className="container mx-auto px-4 py-16">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-3xl font-bold tracking-tight">Shop by Category</h2>
+          <Button variant="ghost" asChild>
+            <Link href="/products">All Products <ArrowRight className="ml-2 h-4 w-4" /></Link>
+          </Button>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {loadingCategories ? (
-            Array.from({ length: 6 }).map((_, i) => (
-              <Skeleton key={i} className="aspect-square rounded-2xl" />
+            Array.from({ length: 8 }).map((_, i) => (
+              <Skeleton key={i} className="aspect-[3/4] rounded-2xl" />
             ))
           ) : (
-            categories?.map((cat) => (
-              <Link 
-                key={cat.id} 
-                href={`/products?categoryId=${cat.id}`}
-                className="group relative aspect-square rounded-2xl overflow-hidden bg-muted flex items-center justify-center p-6 hover-elevate transition-all"
-              >
-                {cat.imageUrl && (
-                  <img src={cat.imageUrl} alt={cat.name} className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 group-hover:scale-110 transition-all duration-500" onError={(e) => { e.currentTarget.style.display = "none"; }} />
-                )}
-                <span className="relative z-10 font-medium text-lg text-foreground group-hover:text-primary transition-colors">{cat.name}</span>
-              </Link>
-            ))
+            categories?.map((cat) => {
+              const img = CATEGORY_IMAGES[cat.name] ?? cat.imageUrl ?? `https://picsum.photos/seed/${cat.id}/600/800`;
+              return (
+                <Link
+                  key={cat.id}
+                  href={`/products?categoryId=${cat.id}`}
+                  className="group relative aspect-[3/4] rounded-2xl overflow-hidden block bg-neutral-900 hover-elevate"
+                >
+                  {/* Background image */}
+                  <img
+                    src={img}
+                    alt={cat.name}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    onError={(e) => {
+                      e.currentTarget.src = `https://picsum.photos/seed/cat${cat.id}/600/800`;
+                      e.currentTarget.onerror = null;
+                    }}
+                  />
+                  {/* Gradient overlay — heavy at bottom, fades to transparent */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                  {/* Hover tint */}
+                  <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  {/* Text */}
+                  <div className="absolute bottom-0 left-0 right-0 p-5 flex items-end justify-between">
+                    <div>
+                      <p className="text-white/70 text-xs uppercase tracking-widest mb-1 font-medium">Collection</p>
+                      <h3 className="text-white font-bold text-xl leading-tight drop-shadow-lg">{cat.name}</h3>
+                    </div>
+                    <div className="w-9 h-9 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0">
+                      <ChevronRight className="h-4 w-4 text-white" />
+                    </div>
+                  </div>
+                </Link>
+              );
+            })
           )}
         </div>
       </section>
