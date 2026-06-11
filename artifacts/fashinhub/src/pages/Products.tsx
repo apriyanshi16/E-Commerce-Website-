@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useLocation } from "wouter";
+import { useState, useEffect } from "react";
+import { useSearch } from "wouter";
 import { useGetProducts, useGetCategories, getGetProductsQueryKey } from "@workspace/api-client-react";
 import { ProductCard } from "@/components/shared/ProductCard";
 import { Input } from "@/components/ui/input";
@@ -10,9 +10,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Search, Filter, X } from "lucide-react";
 
 export default function Products() {
-  const [location] = useLocation();
-  const searchParams = new URLSearchParams(window.location.search);
-  
+  const search = useSearch();
+  const searchParams = new URLSearchParams(search);
+
   const [q, setQ] = useState(searchParams.get("q") || "");
   const [categoryId, setCategoryId] = useState<number | null>(
     searchParams.get("categoryId") ? Number(searchParams.get("categoryId")) : null
@@ -23,6 +23,19 @@ export default function Products() {
   const [isDeal, setIsDeal] = useState(searchParams.get("isDeal") === "true");
   const [isTrending, setIsTrending] = useState(searchParams.get("isTrending") === "true");
   const [isFeatured, setIsFeatured] = useState(searchParams.get("isFeatured") === "true");
+
+  // Sync state whenever the URL search string changes (e.g. clicking a nav category link)
+  useEffect(() => {
+    const p = new URLSearchParams(search);
+    setQ(p.get("q") || "");
+    setCategoryId(p.get("categoryId") ? Number(p.get("categoryId")) : null);
+    setMinPrice(p.get("minPrice") || "");
+    setMaxPrice(p.get("maxPrice") || "");
+    setSort(p.get("sort") || "newest");
+    setIsDeal(p.get("isDeal") === "true");
+    setIsTrending(p.get("isTrending") === "true");
+    setIsFeatured(p.get("isFeatured") === "true");
+  }, [search]);
 
   const { data: categories } = useGetCategories();
   
