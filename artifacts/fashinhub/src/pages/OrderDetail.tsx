@@ -102,6 +102,7 @@ export default function OrderDetail() {
                       src={item.imageUrl || `https://picsum.photos/seed/${item.productId}/200/200`} 
                       alt={item.productName} 
                       className="w-full h-full object-cover"
+                      onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = `https://picsum.photos/seed/${item.productId}/200/200`; }}
                     />
                   </Link>
                   <div className="flex-1 flex flex-col justify-between">

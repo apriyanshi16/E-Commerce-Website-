@@ -59,11 +59,16 @@ export function ProductCard({ product }: ProductCardProps) {
 
   return (
     <Link href={`/products/${product.id}`} className="group relative block rounded-lg border bg-card hover-elevate transition-all duration-300">
-      <div className="relative aspect-[4/5] overflow-hidden rounded-t-lg bg-gray-100">
+      <div className="relative aspect-[4/5] overflow-hidden rounded-t-lg bg-muted">
         <img
           src={product.imageUrl || `https://picsum.photos/seed/${product.id}/400/500`}
           alt={product.name}
           className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
+          onError={(e) => {
+            const target = e.currentTarget;
+            target.onerror = null;
+            target.src = `https://picsum.photos/seed/${product.id + 100}/400/500`;
+          }}
         />
         <div className="absolute top-2 left-2 flex flex-col gap-2">
           {product.isDeal && <Badge variant="destructive">Sale</Badge>}

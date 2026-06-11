@@ -20,6 +20,7 @@ export default function Home() {
             src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?auto=format&fit=crop&q=80&w=2070" 
             alt="Hero Background" 
             className="w-full h-full object-cover opacity-20"
+            onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = "https://picsum.photos/seed/hero/2070/1380"; }}
           />
           <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent" />
         </div>
@@ -59,7 +60,7 @@ export default function Home() {
                 className="group relative aspect-square rounded-2xl overflow-hidden bg-muted flex items-center justify-center p-6 hover-elevate transition-all"
               >
                 {cat.imageUrl && (
-                  <img src={cat.imageUrl} alt={cat.name} className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 group-hover:scale-110 transition-all duration-500" />
+                  <img src={cat.imageUrl} alt={cat.name} className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 group-hover:scale-110 transition-all duration-500" onError={(e) => { e.currentTarget.style.display = "none"; }} />
                 )}
                 <span className="relative z-10 font-medium text-lg text-foreground group-hover:text-primary transition-colors">{cat.name}</span>
               </Link>

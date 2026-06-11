@@ -142,6 +142,7 @@ export default function ProductDetail() {
               src={mainImage} 
               alt={product.name} 
               className="w-full h-full object-cover"
+              onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = `https://picsum.photos/seed/${product.id}/600/600`; }}
             />
           </div>
           {allImages.length > 1 && (
@@ -154,7 +155,7 @@ export default function ProductDetail() {
                     mainImage === img ? "border-primary" : "border-transparent opacity-70 hover:opacity-100"
                   }`}
                 >
-                  <img src={img} alt="" className="w-full h-full object-cover" />
+                  <img src={img} alt="" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = `https://picsum.photos/seed/${product.id}/200/200`; }} />
                 </button>
               ))}
             </div>

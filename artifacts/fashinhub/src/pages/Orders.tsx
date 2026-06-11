@@ -70,6 +70,7 @@ export default function Orders() {
                         src={item.imageUrl || `https://picsum.photos/seed/${item.productId}/100/100`} 
                         alt="" 
                         className="w-full h-full object-cover"
+                        onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = `https://picsum.photos/seed/${item.productId}/100/100`; }}
                       />
                     </div>
                   ))}
