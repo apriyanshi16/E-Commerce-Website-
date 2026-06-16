@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { Search, Filter } from 'lucide-react';
+import { Search, ListFilter as Filter } from 'lucide-react';
 import ProductCard from '../components/shared/ProductCard';
 import { useProducts, useCategories } from '../hooks/useData';
 

@@ -1,5 +1,5 @@
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, CheckCircle, MapPin, CreditCard } from 'lucide-react';
+import { ArrowLeft, CircleCheck as CheckCircle, MapPin, CreditCard } from 'lucide-react';
 import { useOrders } from '../hooks/useData';
 import { formatPrice, formatDate } from '../lib/utils';
 
