@@ -18,7 +18,7 @@ FashionHub is a modern and responsive **full-stack e-commerce platform** built t
 ## 🚀 Live Demo
 
 🔗 **Website:**
-https://5408c5cb-786c-406d-96af-5d974c752151-00-1jltat2uack3o.sisko.replit.dev/
+https://replit.com/@priyanshirana16/Fashion-Hub
 
 ## 🛠️ Tech Stack
 
